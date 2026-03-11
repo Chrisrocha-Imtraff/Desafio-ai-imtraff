@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Desafio IA Imtraff</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #1a1a1a;
+      --surface:     #222222;
+      --card:        #2c2c2c;
+      --card-top:    #333333;
+      --border:      rgba(255,255,255,0.08);
+      --orange:      #74b454;
+      --orange2:     #5a9a3e;
+      --orange-soft: rgba(116,180,84,0.10);
+      --text:        #f2f2f2;
+      --muted:       #9e9e9e;
+      --white:       #ffffff;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: #111111;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-diamond svg { display: block; }
+
+    .logo-info { display: flex; flex-direction: column; }
+
+    .logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      color: var(--white);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .logo-text span { color: var(--orange); }
+
+    .logo-sub {
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #111 0%, #1c1c1c 50%, #222 100%);
+      border-bottom: 3px solid var(--orange);
+      padding: 72px 40px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(245,166,35,0.09) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 280px; height: 100%;
+      background: repeating-linear-gradient(
+        -55deg, transparent, transparent 18px,
+        rgba(245,166,35,0.035) 18px, rgba(245,166,35,0.035) 19px
+      );
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--orange-soft);
+      border: 1px solid rgba(116,180,84,0.35);
+      color: var(--orange);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 3px;
+      margin-bottom: 26px;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 800;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    .hero h1 span { color: var(--orange); }
+
+    .hero-divider {
+      width: 56px;
+      height: 3px;
+      background: var(--orange);
+      margin: 20px auto;
+      border-radius: 2px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 500px;
+      margin: 0 auto 36px;
+      line-height: 1.75;
+      position: relative;
+    }
+
+    .btn-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: #111;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border-radius: 3px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 22px rgba(116,180,84,0.32);
+      position: relative;
+    }
+
+    .btn-hero:hover {
+      background: var(--orange2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(116,180,84,0.48);
+    }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .section-bar {
+      width: 4px;
+      height: 26px;
+      background: var(--orange);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--white);
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── GRID ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(316px, 1fr));
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      animation: fadeUp 0.55s ease both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.08s; }
+    .card:nth-child(2) { animation-delay: 0.16s; }
+    .card:nth-child(3) { animation-delay: 0.24s; }
+    .card:nth-child(4) { animation-delay: 0.32s; }
+    .card:nth-child(5) { animation-delay: 0.40s; }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(116,180,84,0.38);
+      box-shadow: 0 14px 44px rgba(0,0,0,0.4), 0 0 0 1px rgba(116,180,84,0.12);
+    }
+
+    .card-top {
+      background: var(--card-top);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-num {
+      background: var(--orange);
+      color: #111;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+
+    .card-icon { font-size: 1.4rem; line-height: 1; }
+
+    .card-body {
+      padding: 20px 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.35;
+    }
+
+    .card-author {
+      font-size: 0.75rem;
+      color: var(--orange);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-author::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 1px;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+
+    .card-desc {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .card-footer {
+      padding: 13px 22px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .tag {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 4px 11px;
+      border-radius: 2px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--orange);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid rgba(116,180,84,0.3);
+      border-radius: 2px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .card-link:hover {
+      background: var(--orange-soft);
+      border-color: var(--orange);
+    }
+
+    .card-link svg { width: 11px; height: 11px; }
+
+    /* ── CTA BOTTOM ── */
+    .cta-section {
+      background: linear-gradient(135deg, #222 0%, #2a2a2a 100%);
+      border: 1px solid rgba(116,180,84,0.2);
+      border-left: 4px solid var(--orange);
+      border-radius: 5px;
+      padding: 40px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.55s 0.48s ease both;
+    }
+
+    .cta-text h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .cta-text p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      max-width: 460px;
+      line-height: 1.65;
+    }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: #111;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 15px 38px;
+      border-radius: 3px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 22px rgba(116,180,84,0.3);
+    }
+
+    .btn-cta:hover {
+      background: var(--orange2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(116,180,84,0.46);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #111;
+      border-top: 1px solid var(--border);
+      padding: 20px 40px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    footer strong { color: var(--orange); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .hero { padding: 50px 20px 44px; }
+      .topbar { padding: 14px 20px; }
+      .cta-section { flex-direction: column; text-align: center; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo-info">
+      <div class="logo-text">IM<span>TRAFF</span></div>
+      <div class="logo-sub">Engenharia e Mobilidade</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🏆 &nbsp;Votação aberta</div>
+    <h1>Desafio <span>IA</span> Imtraff</h1>
+    <div class="hero-divider"></div>
+    <p>Conheça os 5 projetos finalistas e vote naquele que mais te inspirou. Sua opinião é fundamental para eleger a melhor iniciativa de IA da nossa empresa!</p>
+    <a class="btn-hero" href="https://forms.office.com/Pages/ResponsePage.aspx?id=AHflEEyvKEqmEea4V136T0550wQf4sVDsFQMhpmVsFdUM1NOT0NGOU5UUU5ZWE5MTDBJNkpTV0Y4Sy4u" target="_blank">
+      ✦ &nbsp;Votar agora
+    </a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="wrapper">
+
+    <div class="section-header">
+      <div class="section-bar"></div>
+      <div class="section-title">Projetos Finalistas</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- CARD 1 - Aleandro Matteoni -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">PROJETO 01</span>
+          <span class="card-icon">🧹</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">ATQD – Agente de Transformação e Qualidade de Dados</div>
+          <div class="card-author">Aleandro Matteoni</div>
+          <p class="card-desc">Imagina mandar uma planilha bagunçada para uma IA e receber de volta tudo organizado, padronizado e pronto para usar — sem mexer em nada manualmente. É exatamente isso que este agente faz. Chega de retrabalho!</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Dados & Qualidade</span>
+          <a class="card-link" href="https://imtraffbr.sharepoint.com/:b:/r/sites/IMTRAFF-CONSULTORIAEPROJETOSDEENGENHARIALTDA/Shared%20Documents/General/Desafio%20IA-Imtraff/Agente-de-Transformacao-e-Qualidade-de-Dados-ATQD_Aleandro%20Matteoni.pdf?csf=1&web=1&e=xXm1Tp" target="_blank">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- CARD 2 - Kleberson Rocha -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">PROJETO 02</span>
+          <span class="card-icon">🧠</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Framework Interno de Uso de IA – Área Comercial</div>
+          <div class="card-author">Kleberson Rocha</div>
+          <p class="card-desc">E se toda a equipe soubesse usar IA do jeito certo, com resultados previsíveis e profissionais? Este projeto criou um guia prático para isso — um passo a passo que transforma qualquer colaborador em um usuário estratégico de IA.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Governança & Metodologia</span>
+          <a class="card-link" href="https://imtraffbr.sharepoint.com/:b:/r/sites/IMTRAFF-CONSULTORIAEPROJETOSDEENGENHARIALTDA/Shared%20Documents/General/Desafio%20IA-Imtraff/002-DESAFIO%20IMTRAFF%20DE%20INTELIG%C3%8ANCIA%20ARTIFICIAL%202026-Kleberson%20Rocha.pdf?csf=1&web=1&e=uyNSss" target="_blank">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- CARD 3 - Lucas Aguiar -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">PROJETO 03</span>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Dashboards HTML com ChatGPT</div>
+          <div class="card-author">Lucas Aguiar</div>
+          <p class="card-desc">O que antes levava dias para construir, agora sai em horas — só descrevendo o que você quer. Gráficos, filtros, indicadores: tudo gerado por IA em um arquivo leve que abre em qualquer navegador, sem precisar de sistema algum.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Visualização & BI</span>
+          <a class="card-link" href="https://imtraffbr.sharepoint.com/:b:/r/sites/IMTRAFF-CONSULTORIAEPROJETOSDEENGENHARIALTDA/Shared%20Documents/General/Desafio%20IA-Imtraff/002%20-%20Desafio%20IA%20-%20Lucas%20Aguiar.pdf?csf=1&web=1&e=rV5lej" target="_blank">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- CARD 4 - Luís Carlos -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">PROJETO 04</span>
+          <span class="card-icon">☁️</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Automação e Governança do SharePoint Online</div>
+          <div class="card-author">Luís Carlos Gomes Duarte</div>
+          <p class="card-desc">1,2 terabyte liberado em uma única noite — sem intervenção humana. Este projeto usou IA para varrer centenas de sites do SharePoint, identificar o que estava sobrando e organizar tudo automaticamente. O futuro da TI é assim.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">TI & Infraestrutura</span>
+          <a class="card-link" href="https://imtraffbr.sharepoint.com/:b:/r/sites/IMTRAFF-CONSULTORIAEPROJETOSDEENGENHARIALTDA/Shared%20Documents/General/Desafio%20IA-Imtraff/Imtraff_IA_SharePoint_v2%20Luis%20Carlos.pdf?csf=1&web=1&e=Zd3G16" target="_blank">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- CARD 5 - Thiago Tostes -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">PROJETO 05</span>
+          <span class="card-icon">📄</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">IA Generativa na Elaboração de Documentos e Propostas</div>
+          <div class="card-author">Thiago Tostes</div>
+          <p class="card-desc">Uma proposta comercial completa em 5 minutos — sem garimpar arquivos antigos, sem copiar e colar, sem horas perdidas. A IA aprende com o histórico da empresa e entrega o documento pronto. Veja como isso já está acontecendo.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Comercial & Propostas</span>
+          <a class="card-link" href="https://imtraffbr.sharepoint.com/:b:/r/sites/IMTRAFF-CONSULTORIAEPROJETOSDEENGENHARIALTDA/Shared%20Documents/General/Desafio%20IA-Imtraff/IA%20Generativa%20na%20Elabora%C3%A7%C3%A3o%20de%20documentos%20e%20propostas_Thiago%20Tostes.pdf?csf=1&web=1&e=8ipf2B" target="_blank">
+            Ver projeto
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /cards-grid -->
+
+    <!-- CTA BOTTOM -->
+    <div class="cta-section">
+      <div class="cta-text">
+        <h2>Qual projeto vai ganhar? 🏆</h2>
+        <p>Sua opinião conta! Vote no projeto que você acha mais inovador e impactante para a Imtraff. A votação é rápida e leva menos de 1 minuto.</p>
+      </div>
+      <a class="btn-cta" href="https://forms.office.com/Pages/ResponsePage.aspx?id=AHflEEyvKEqmEea4V136T0550wQf4sVDsFQMhpmVsFdUM1NOT0NGOU5UUU5ZWE5MTDBJNkpTV0Y4Sy4u" target="_blank">
+        ✦ &nbsp;Registrar meu voto
+      </a>
+    </div>
+
+  </div><!-- /wrapper -->
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 <strong>IMTRAFF</strong> · Engenharia, Mobilidade e Tecnologia · Todos os direitos reservados.
+  </footer>
+
+</body>
+</html>
+
